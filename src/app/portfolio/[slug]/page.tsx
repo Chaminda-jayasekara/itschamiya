@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { SmartImg } from "@/components/SmartImg";
 import type { Project } from "@/types";
 
 export default async function ProjectPage({
@@ -26,11 +27,19 @@ export default async function ProjectPage({
       </p>
       <h1 className="text-3xl font-bold mb-6">{project.name}</h1>
 
-      <div className="aspect-video bg-gray-100 rounded-lg mb-4" />
-      {project.images && project.images.length > 0 && (
+      <div className="aspect-video bg-gray-100 rounded-lg mb-4">
+        <SmartImg
+          src={(project.images?.find((i) => i.is_cover) ?? project.images?.[0])?.url}
+          alt={project.name}
+          className="w-full h-full rounded-lg"
+        />
+      </div>
+      {project.images && project.images.length > 1 && (
         <div className="flex gap-3 mb-10">
           {project.images.map((img) => (
-            <div key={img.id} className="w-20 h-14 bg-gray-100 rounded" />
+            <div key={img.id} className="w-20 h-14 bg-gray-100 rounded overflow-hidden">
+              <SmartImg src={img.url} alt={project.name} className="w-full h-full" />
+            </div>
           ))}
         </div>
       )}

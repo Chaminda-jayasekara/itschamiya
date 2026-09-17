@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { SmartImg } from "@/components/SmartImg";
 import type { Project, Client, Profile } from "@/types";
 
 export default async function HomePage() {
@@ -10,7 +11,7 @@ export default async function HomePage() {
       supabase.from("profile").select("*").single<Profile>(),
       supabase
         .from("projects")
-        .select("*, client:clients(*)")
+        .select("*, client:clients(*), images:project_images(*)")
         .eq("is_live", true)
         .eq("featured", true)
         .order("sort_order")
@@ -37,7 +38,9 @@ export default async function HomePage() {
             Get in touch
           </Link>
         </div>
-        <div className="aspect-square bg-gray-100 rounded-lg" />
+        <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+          <SmartImg src={profile?.photo_url} alt="Chaminda Jayasekara" className="w-full h-full" />
+        </div>
       </section>
 
       {/* Who am I */}
@@ -59,9 +62,13 @@ export default async function HomePage() {
           </h2>
           <div className="flex flex-wrap gap-6 items-center">
             {clients.map((c) => (
-              <span key={c.id} className="text-gray-400 text-sm">
-                {c.name}
-              </span>
+              <div key={c.id} className="h-9 flex items-center">
+                {c.logo_url ? (
+                  <SmartImg src={c.logo_url} alt={c.name} className="h-9 w-auto" />
+                ) : (
+                  <span className="text-gray-400 text-sm">{c.name}</span>
+                )}
+              </div>
             ))}
           </div>
         </section>
@@ -73,21 +80,26 @@ export default async function HomePage() {
           Projects I&apos;ve done
         </h2>
         <div className="grid md:grid-cols-3 gap-6">
-          {(featuredProjects ?? []).map((p) => (
-            <Link
-              key={p.id}
-              href={`/portfolio/${p.slug}`}
-              className="border rounded-lg overflow-hidden hover:shadow-sm transition"
-            >
-              <div className="aspect-video bg-gray-100" />
-              <div className="p-4">
-                <h3 className="font-medium">{p.name}</h3>
-                <p className="text-sm text-gray-500 line-clamp-2">
-                  {p.description}
-                </p>
-              </div>
-            </Link>
-          ))}
+          {(featuredProjects ?? []).map((p) => {
+            const cover = p.images?.find((i) => i.is_cover) ?? p.images?.[0];
+            return (
+              <Link
+                key={p.id}
+                href={`/portfolio/${p.slug}`}
+                className="border rounded-lg overflow-hidden hover:shadow-sm transition"
+              >
+                <div className="aspect-video bg-gray-100">
+                  <SmartImg src={cover?.url} alt={p.name} className="w-full h-full" />
+                </div>
+                <div className="p-4">
+                  <h3 className="font-medium">{p.name}</h3>
+                  <p className="text-sm text-gray-500 line-clamp-2">
+                    {p.description}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
         <Link
           href="/portfolio"

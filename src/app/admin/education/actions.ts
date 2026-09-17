@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 export async function saveEducation(formData: FormData) {
@@ -23,6 +24,7 @@ export async function saveEducation(formData: FormData) {
 
   revalidatePath("/admin/education");
   revalidatePath("/about");
+  redirect("/admin/education");
 }
 
 export async function deleteEducation(formData: FormData) {

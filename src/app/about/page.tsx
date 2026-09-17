@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { SmartImg } from "@/components/SmartImg";
 import type { Profile, Experience, Education } from "@/types";
 
 export default async function AboutPage() {
@@ -22,7 +23,9 @@ export default async function AboutPage() {
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
       <div className="grid md:grid-cols-[220px_1fr] gap-8 mb-12">
-        <div className="aspect-square bg-gray-100 rounded-lg" />
+        <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+          <SmartImg src={profile?.photo_url} alt="Chaminda Jayasekara" className="w-full h-full" />
+        </div>
         <div>
           <h1 className="text-2xl font-bold mb-3">Who am I</h1>
           <p className="text-gray-700 mb-4">{profile?.bio}</p>

@@ -19,9 +19,37 @@ Next.js (App Router) + Supabase, matching the wireframes and data model discusse
 6. `npm install`
 7. `npm run dev` — visit `http://localhost:3000` (public site) and `http://localhost:3000/admin` (admin, will redirect to login).
 
+## Adding images via Google Drive links
+
+Every image field in the admin (profile photo, project images, client logos) is
+a plain URL — paste a link and it renders. **A normal Google Drive "share" link
+will NOT work** (`https://drive.google.com/file/d/FILE_ID/view?usp=sharing`) —
+that opens Drive's HTML viewer page, not the raw image, so it'll just show a
+broken image icon.
+
+To get a link that actually renders:
+1. In Drive, right-click the file → **Share** → set access to **"Anyone with the link"**.
+2. Copy the file ID out of the share link (the long string between `/d/` and `/view`).
+3. Use this format instead:
+   ```
+   https://drive.google.com/uc?export=view&id=FILE_ID
+   ```
+   If that ever stops rendering (Google tightens hotlinking restrictions from
+   time to time), try:
+   ```
+   https://lh3.googleusercontent.com/d/FILE_ID
+   ```
+
+Where to paste these:
+- **Settings → Profile photo URL** — used on the Home hero and About page
+- **Projects → Image URLs** — one link per line in the textarea; the first line becomes the cover image shown on cards
+- **Clients → Logo URL** — shown on the homepage "Companies I've worked with" row
+
+For anything beyond a handful of images, a dedicated image host (Supabase
+Storage, Cloudinary, imgix) will be more reliable than Drive long-term — Drive
+wasn't built to serve images at scale and links occasionally get rate-limited.
+
 ## Still to build
-- Image upload wired to Supabase Storage on the project form (and logo upload on clients)
-- Editing existing rows in the admin (forms currently only create — each list has Delete, but "Edit" needs a pre-filled form/modal wired to the same `save*` action)
 - Real filter dropdowns on `/portfolio` (currently static labels; the query already supports `?category=` and `?company=`)
 - Contact form → real email delivery or a `messages` table
-- Reviews and project images have no admin UI yet — insert them directly in the Supabase table editor for now
+- Reviews have no admin UI yet — insert them directly in the Supabase table editor for now

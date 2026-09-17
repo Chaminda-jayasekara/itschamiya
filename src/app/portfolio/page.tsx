@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { SmartImg } from "@/components/SmartImg";
 import type { Project } from "@/types";
 
 export default async function PortfolioPage({
@@ -12,7 +13,7 @@ export default async function PortfolioPage({
 
   let query = supabase
     .from("projects")
-    .select("*, client:clients(*)")
+    .select("*, client:clients(*), images:project_images(*)")
     .eq("is_live", true)
     .order("completed_date", { ascending: false });
 
@@ -34,23 +35,28 @@ export default async function PortfolioPage({
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">
-        {(projects ?? []).map((p) => (
-          <Link
-            key={p.id}
-            href={`/portfolio/${p.slug}`}
-            className="border rounded-lg overflow-hidden hover:shadow-sm transition"
-          >
-            <div className="aspect-video bg-gray-100" />
-            <div className="p-4">
-              <h3 className="font-medium">{p.name}</h3>
-              {p.category && (
-                <span className="inline-block mt-1 text-xs text-gray-500 border rounded-full px-2 py-0.5">
-                  {p.category}
-                </span>
-              )}
-            </div>
-          </Link>
-        ))}
+        {(projects ?? []).map((p) => {
+          const cover = p.images?.find((i) => i.is_cover) ?? p.images?.[0];
+          return (
+            <Link
+              key={p.id}
+              href={`/portfolio/${p.slug}`}
+              className="border rounded-lg overflow-hidden hover:shadow-sm transition"
+            >
+              <div className="aspect-video bg-gray-100">
+                <SmartImg src={cover?.url} alt={p.name} className="w-full h-full" />
+              </div>
+              <div className="p-4">
+                <h3 className="font-medium">{p.name}</h3>
+                {p.category && (
+                  <span className="inline-block mt-1 text-xs text-gray-500 border rounded-full px-2 py-0.5">
+                    {p.category}
+                  </span>
+                )}
+              </div>
+            </Link>
+          );
+        })}
         {(!projects || projects.length === 0) && (
           <p className="text-gray-500 col-span-3">
             No published projects yet — add some from /admin.

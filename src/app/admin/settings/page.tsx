@@ -19,6 +19,20 @@ export default async function AdminSettingsPage() {
 
       <form action={saveProfile} className="space-y-4 max-w-xl">
         <div>
+          <label className="block text-sm mb-1">Profile photo URL</label>
+          <input
+            name="photo_url"
+            defaultValue={profile?.photo_url ?? ""}
+            placeholder="https://... (see README for Google Drive link format)"
+            className="w-full border rounded px-3 py-2 text-sm"
+          />
+          <p className="text-xs text-gray-400 mt-1">
+            Used on the Home hero and the About page. See the README for how to
+            format a Google Drive link so it actually renders.
+          </p>
+        </div>
+
+        <div>
           <label className="block text-sm mb-1">Bio</label>
           <textarea
             name="bio"

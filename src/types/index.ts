@@ -66,6 +66,7 @@ export type Education = {
 export type Profile = {
   id: number;
   bio: string | null;
+  photo_url: string | null;
   skills: string[];
   cv_url: string | null;
   contact_email: string | null;

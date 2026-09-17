@@ -79,6 +79,7 @@ create table if not exists education (
 create table if not exists profile (
   id int primary key default 1 check (id = 1),  -- enforce single row
   bio text,
+  photo_url text,             -- hero / about-page photo
   skills text[] default '{}',
   cv_url text,
   contact_email text,
@@ -87,6 +88,9 @@ create table if not exists profile (
   updated_at timestamptz not null default now()
 );
 insert into profile (id) values (1) on conflict (id) do nothing;
+
+-- If you already ran this schema before photo_url existed, just run:
+-- alter table profile add column if not exists photo_url text;
 
 -- =========================================================
 -- ROW LEVEL SECURITY
